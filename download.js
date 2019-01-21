@@ -4,6 +4,8 @@ const path = require ('path')
 const uuidv5 = require ('uuid/v5');
 
 const downloadpage = async (URL) => {
+  console.log('downloading' + " " + URL)
+
  const folder =  await uuidv5(URL, uuidv5.URL)
  fs.mkdirSync(`./${folder}`,{recursive: true}, (err) =>{
    if (err) throw err
@@ -20,7 +22,7 @@ const req = http.request(linkUrl, function(res) {
    });
 
    res.on("end", function () {
-       callback(folder, content);
+       callback(folder, content, URL);
    })
 
 });
@@ -29,12 +31,18 @@ req.end();
 
 }
 
-const write = (carpet, data) => {
+const write = (carpet, data, urlData) => {
   fs.writeFile(`./${carpet}/file.html`, data, (err) => {
    if (err) throw err;
    });
+   fs.writeFile(`./${carpet}/url.txt`, urlData, (err) => {
+    if (err) throw err;
+    });
+
+    console.log('downloading is done in' + carpet)
+
 }
 fetchPage(URL,write);
 }
 
-downloadpage("http://www.google.com");
+downloadpage(process.argv[2]);
